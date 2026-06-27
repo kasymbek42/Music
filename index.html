@@ -1,15 +1,96 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Music</title>
-  <style>
-    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #111; color: #fff; }
-    h1 { font-size: 2.5rem; letter-spacing: 0.1em; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Разбор трека — аккорды и партии</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>🎵 Music</h1>
+
+<script src="coi-serviceworker.js"></script>
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__mark">&#9719;</span>
+      <div class="topbar__titles">
+        <h1>Разбор трека</h1>
+        <p>аккорды &middot; аппликатуры &middot; партии инструментов &mdash; всё в браузере</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section id="upload-screen" class="screen">
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" accept=".mp3,.wav,.m4a,.flac,.ogg,.aac" hidden>
+        <div class="dropzone__icon">&#9834;</div>
+        <p class="dropzone__title">Загрузите аудиофайл</p>
+        <p class="dropzone__hint">.mp3, .wav, .m4a, .flac &mdash; перетащите сюда или нажмите для выбора</p>
+        <p class="dropzone__note">
+          Обработка происходит полностью на вашем устройстве &mdash; файл никуда не отправляется.
+          Файлы из Apple Music с защитой DRM не поддерживаются.
+        </p>
+      </div>
+    </section>
+
+    <section id="analyzing-screen" class="screen" hidden>
+      <div class="progress-card">
+        <div class="progress-card__spinner" aria-hidden="true"></div>
+        <p class="progress-card__status" id="analyzing-status">Анализируем&hellip;</p>
+      </div>
+    </section>
+
+    <section id="results-screen" class="screen" hidden>
+
+      <div class="panel">
+        <h2 class="panel__title" id="result-filename">&mdash;</h2>
+        <canvas id="original-waveform" class="waveform-canvas"></canvas>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel__title">Аккорды</h2>
+        <p class="panel__hint">Распознанная последовательность по времени трека. Нажмите на аккорд, чтобы увидеть схему.</p>
+        <div class="chords-timeline" id="chords-timeline"></div>
+        <div class="chord-diagrams" id="chord-diagrams"></div>
+      </div>
+
+      <div class="panel" id="stems-section" hidden>
+        <h2 class="panel__title">Партии инструментов</h2>
+        <p class="panel__hint">
+          Разделение на вокал/барабаны/бас/прочее работает через нейросеть прямо в браузере.
+          Модель (~80&ndash;150&nbsp;МБ) скачается при первом запуске и закэшируется.
+          Обработка может занять от десятков секунд до нескольких минут &mdash; зависит от длины трека и мощности устройства.
+        </p>
+        <button class="btn" id="separate-stems-btn">Разделить на инструменты</button>
+
+        <div id="stems-progress" class="stems-progress" hidden>
+          <div class="stems-progress__bar-track">
+            <div class="stems-progress__bar" id="stems-progress-bar"></div>
+          </div>
+          <p class="stems-progress__status" id="stems-progress-status">Подготовка&hellip;</p>
+        </div>
+
+        <div id="stems-results" class="stems-grid" hidden></div>
+      </div>
+
+      <button class="btn btn--ghost" id="new-upload-btn">Загрузить другой трек</button>
+    </section>
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.2/dist/ort.min.js"></script>
+
+<script src="js/audio-loader.js"></script>
+<script src="js/chords.js"></script>
+<script src="js/guitar-chords.js"></script>
+<script src="js/waveform.js"></script>
+<script src="js/stem-separation.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
